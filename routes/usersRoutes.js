@@ -1,12 +1,12 @@
-var userCrl = require('../controllers/usersControl')
-const express = require('express');
-const user = express();
+// var userCrl = require('../controllers/usersControl')
+// const express = require('express');
+// const user = express();
 
 
-user.post('/register',userCrl.postNewUser);
-user.post('/login',userCrl.loginUser);
+// user.post('/add',userCrl.postNewUser);
+// user.post('/login',userCrl.loginUser);
 
 
 
 
-module.exports = user ;
+// module.exports = user ;

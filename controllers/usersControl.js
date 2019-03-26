@@ -1,4 +1,6 @@
+
 const bcrypt = require('bcryptjs');
+const gravatar = require("gravatar");
 const transporter = require('../config/mailConfig').hostId
 const adminEmail = require('../config/mailConfig').adminEmail
 //////////// Validation
@@ -8,30 +10,44 @@ const validateRegisterInput = require('../validation/registerUser');
 const User = require('../models/User');
 /////////Exports Controllers Functions /////////////////
 module.exports=
-{
+{       /* Ajouter User */
     postNewUser:(req, res) => {
-        const { errors, isValid } = validateRegisterInput(req.body);
-        console.log(req.body.userName)
+      ////////////test console
+      console.log('----------------------------------------------')
+          console.log('Test From  postNewUser function '+'\n',req.body,'\n')
+      /////////////
+         const { errors, isValid } = validateRegisterInput(req.body);
         // Check Validation
-        if (!isValid) {
-          return res.status(400).json(errors);
-        }
-      /////////verification userName
-        User.findOne({ userName: req.body.userName }).then(user => {
+         if (!isValid) {
+           return res.status(400).json(errors);
+         }
+      /////////verification email
+        User.findOne({ email: req.body.email }).then(user => {
           if (user) {
-            errors.userName = 'userName already exists';
+            console.log('user detected')
+            errors.email = 'email already exists';
             return res.status(400).json(errors);
           } 
+          const avatar = gravatar.url(req.body.contactEmailPersonnel, {
+            s: "60", //size of the image
+            r: "pg", //rating of the image (for preventing nudity, etc.)
+            d: "mm" // default image if user does not have a gravatar
+          })
            const newUser = new User({
-              userName: req.body.userName,
-              email: req.body.email,
-              password: req.body.password,
-              role: req.body.role,
-              activation: true,
+
+/* clé Prem Fetch */email: req.body.email,
+                    userName: req.body.userName, 
+                    contactEmailPersonnel: req.body.contactEmailPersonnel,
+                    password: req.body.password,
+                    role: req.body.role,
+                    activation: true,
+                    avatar:avatar,
             });
-            
-    
-            bcrypt.genSalt(10, (err, salt) => {
+            ////////les input emta3 el sendMail
+            sendName=req.body.email;
+            sendPassword=req.body.password;
+            //////////////////////////////////
+             bcrypt.genSalt(10, (err, salt) => {
               bcrypt.hash(newUser.password, salt, (err, hash) => {
                 if (err) throw err;
                 newUser.password = hash;
@@ -42,9 +58,9 @@ module.exports=
               if(user.email){
                 var mailOptions = {
                   from: adminEmail, 
-                  to: req.body.email,  
+                  to: req.body.contactEmailPersonnel,  
                   subject: 'Light Rh',
-                  text: req.body.userName
+                  text: 'User name :'+'\n' +sendName+'\n'+'Password :'+'\n'+sendPassword
                 };
     
                 transporter.sendMail(mailOptions, function(error, info){
@@ -63,6 +79,8 @@ module.exports=
             });
     
         })},
+
+         /*  Login user from backend */
     loginUser:(req, res) => {
         const { errors, isValid } = validateLoginInput(req.body);
       
@@ -71,14 +89,14 @@ module.exports=
           return res.status(400).json(errors);
         }
       
-        const userName = req.body.userName;
+        const email = req.body.email;
         const password = req.body.password;
       
         // Find user by userName
-        User.findOne({ userName }).then(user => {
+        User.findOne({ email }).then(user => {
           // Check for user
           if (!user) {
-            errors.userName = 'User not found';
+            errors.email = 'User not found';
             return res.status(404).json(errors);
           }
       
@@ -92,7 +110,29 @@ module.exports=
             }
           });
         });
-      }
+      },
+
+
+    listAllUser:(req,res) => {
+
+/* res.status(200).json(res) */ 
+       User.find()
+      .then(resp => res.status(200).json(resp))
+      .catch(err => res.status(400).json(err))
+      
+
+    }
+
+
+
+
+
+
+
+
+
+
+
 }
 
   

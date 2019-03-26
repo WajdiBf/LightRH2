@@ -1,13 +1,25 @@
 const nodemailer = require('nodemailer')
 
+const userMail ='benftimawajdii@gmail.com'
+const passMail ='123sambaawajdii'
+const adminMail = 'benftimawajdii@gmail.com'
+
+
+
+
+
+
+
+
+
 
 var hostId = nodemailer.createTransport({
     service: 'gmail',
     secure:false,
     port:25,
     auth: {
-          user: 'benftimawajdii@gmail.com',
-          pass: '123sambaawajdii'
+          user: userMail,
+          pass: passMail
       },
     tls: {
           rejectUnauthorized:false
@@ -17,6 +29,6 @@ var hostId = nodemailer.createTransport({
 
   module.exports = {
       hostId,
-    adminEmail:'benftimawajdii@gmail.com'}
+    adminEmail:adminMail}
   
   ;

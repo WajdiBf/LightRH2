@@ -5,8 +5,11 @@ module.exports = User = mongoose.model('User',new Schema({
 
     userName: {
         type : String ,
+    },
+    email: {
+        type : String ,
         required:true,
-        unique: 'Two users cannot share the same username ({VALUE})'
+        unique:'Email already used'
     },
     date: {
         type:Date,
@@ -18,14 +21,17 @@ module.exports = User = mongoose.model('User',new Schema({
     },
     role:{
         type: String,
-        enum: ['developer','Quality assurance','IT','RH']
+        enum: ['Developer','Quality assurance','IT','RH','admin'],
+        required:true
     },
     activation:{
         type:Boolean,
     },
-    email: {
+    contactEmailPersonnel: {
         type: String,
         required: true
       },
-    
-}))
+      avatar: {
+        type: String
+      }
+})) 
